@@ -7,11 +7,13 @@ import {
   getRecordedActivityById,
   updateRecordedActivityById,
 } from "../controllers/recordedActivityController.js";
+import { checkCreateRecordedActivity } from "../validators/recordedActivityValidator.js";
+import { checkErrors } from "../validators/checkErrors.js";
 
 const router = express.Router();
 
 router.get("/list", getActivityTypes);
-router.put("/recorded", createRecordedActivity);
+router.put("/recorded", checkCreateRecordedActivity, checkErrors, createRecordedActivity);
 router.get("/recorded", getRecordedActivities);
 router.post("/recorded", getRecordedActivityById);
 router.patch("/recorded", updateRecordedActivityById);
