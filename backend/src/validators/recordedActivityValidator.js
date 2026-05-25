@@ -24,22 +24,12 @@ const intensity_level_isInt = body(
   .optional()
   .isInt({ min: 0, max: 3 });
 
-const recorded_activity_id_isMongoId = body(
+export const recorded_activity_id_isMongoId = body(
   "recorded_activity_id",
   "recorded_activity_id must be a MongoId",
 ).isMongoId();
 
-export const checkCreateRecordedActivity = [
-  type_notEmpty,
-  activity_date_isISO8601,
-  distance_m_isInt,
-  duration_ms_isInt,
-  laps_isInt,
-  intensity_level_isInt,
-];
-
-export const checkUpdateRecordedActivity = [
-  recorded_activity_id_isMongoId,
+export const checkRecordedActivity = [
   type_notEmpty,
   activity_date_isISO8601,
   distance_m_isInt,
