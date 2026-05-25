@@ -25,6 +25,7 @@ export const createActivityConfig = async (req, res, next) => {
       duration_ms_toggle: req.body.duration_ms_toggle,
       laps_toggle: req.body.laps_toggle,
       intensity_level_toggle: req.body.intensity_level_toggle,
+      comments_toggle: req.body.comments_toggle,
     });
 
     res.json("activity configuration created");

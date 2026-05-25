@@ -3,12 +3,12 @@ import mongoose from "mongoose";
 const ActivityConfigSchema = new mongoose.Schema(
   {
     type: { type: String, required: true },
-    distance_m: { type: Boolean, default: true },
-    duration_ms: { type: Boolean, default: true },
-    laps: { type: Boolean, default: true },
-    intensity_level: { type: Boolean, default: true },
-    comments: { type: Boolean, default: true },
-    created_at: { type: Date, default: Date.now },
+    distance_m_toggle: { type: Boolean, default: true },
+    duration_ms_toggle: { type: Boolean, default: true },
+    laps_toggle: { type: Boolean, default: true },
+    intensity_level_toggle: { type: Boolean, default: true },
+    comments_toggle: { type: Boolean, default: true },
+    created_at_toggle: { type: Date, default: Date.now },
   },
   { collection: "activityConfig" },
 );
