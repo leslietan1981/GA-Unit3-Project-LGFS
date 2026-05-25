@@ -102,6 +102,28 @@ export const updateRecordedActivityById = async (req, res, next) => {
 
     res.json("recorded-activity updated");
   } catch (error) {
-    return next(setErrorObj(error, 400, "failed to get recorded-activity"));
+    return next(setErrorObj(error, 400, "failed to update recorded-activity"));
+  }
+};
+
+export const deleteRecordedActivityById = async (req, res, next) => {
+  try {
+    // user_id is currently dev test data, to be replaced with id from decoded jwt token when auth is ready
+    const user_id = "6a10079fd954accc43a64c42";
+
+    const activityFound = await RecordedActivityModel.findById(req.body.recorded_activity_id);
+    if (!activityFound) {
+      return next(getErrorObj(404, "recorded-activity not found"));
+    } else if (!activityFound.user_id.equals(user_id)) {
+      return next(
+        getErrorObj(403, "not authorized", "not authorized to delete: recorded-activity does not belong to the user"),
+      );
+    }
+
+    await activityFound.deleteOne();
+
+    res.json("recorded_activity deleted");
+  } catch (error) {
+    return next(setErrorObj(error, 400, "failed to delete recorded-activity"));
   }
 };

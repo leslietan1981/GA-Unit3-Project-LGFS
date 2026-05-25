@@ -1,6 +1,7 @@
 import express from "express";
 import {
   createRecordedActivity,
+  deleteRecordedActivityById,
   getActivityTypes,
   getRecordedActivities,
   getRecordedActivityById,
@@ -14,5 +15,6 @@ router.put("/recorded", createRecordedActivity);
 router.get("/recorded", getRecordedActivities);
 router.post("/recorded", getRecordedActivityById);
 router.patch("/recorded", updateRecordedActivityById);
+router.delete("/recorded", deleteRecordedActivityById);
 
 export default router;
