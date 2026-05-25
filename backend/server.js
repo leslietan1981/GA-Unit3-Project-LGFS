@@ -24,11 +24,7 @@ app.use((err, req, res, next) => {
       status: 400,
       message: "invalid JSON format",
     });
-  } else if (
-    err instanceof SyntaxError &&
-    err.status === 400 &&
-    err.type === "entity.parse.failed"
-  ) {
+  } else if (err instanceof SyntaxError && err.status === 400 && err.type === "entity.parse.failed") {
     console.error("URL-encoded parsing error:", err.message);
     return res.status(400).json({
       status: 400,
@@ -41,7 +37,6 @@ app.use((err, req, res, next) => {
 
 const apiBase = "/api";
 
-// app.use("/api", authRouter);
 app.use(apiBase, authRouter);
 app.use(apiBase, userRouter);
 app.use(apiBase + "/activities", recordedActivityRouter);
