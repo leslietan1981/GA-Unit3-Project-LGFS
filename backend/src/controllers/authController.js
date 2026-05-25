@@ -47,58 +47,13 @@ const login = async (req, res) => {
     const accessToken = jwt.sign(
       { id: user._id, username: user.username, role: user.role },
       process.env.ACCESS_SECRET,
-      { expiresIn: "15m" }
+      { expiresIn: "1d" }
     );
-
-    const refreshToken = jwt.sign(
-      { id: user._id },
-      process.env.REFRESH_SECRET,
-      { expiresIn: "7d" }
-    );
-
-    user.refreshToken = refreshToken;
-    await user.save();
 
     res.status(200).json({
       status: "ok",
       message: "Login successful",
-      data: { access: accessToken, refresh: refreshToken },
-    });
-  } catch (err) {
-    res.status(500).json({ status: "error", message: err.message });
-  }
-};
-
-// POST /api/auth/refresh
-const refresh = async (req, res) => {
-  try {
-    const { token } = req.body;
-
-    if (!token) {
-      return res.status(401).json({ status: "error", message: "Refresh token missing" });
-    }
-
-    let decoded;
-    try {
-      decoded = jwt.verify(token, process.env.REFRESH_SECRET);
-    } catch (err) {
-      return res.status(401).json({ status: "error", message: "Refresh token invalid or expired" });
-    }
-
-    const user = await User.findById(decoded.id);
-    if (!user || user.refreshToken !== token) {
-      return res.status(401).json({ status: "error", message: "Refresh token not recognised" });
-    }
-
-    const newAccessToken = jwt.sign(
-      { id: user._id, username: user.username, role: user.role },
-      process.env.ACCESS_SECRET,
-      { expiresIn: "15m" }
-    );
-
-    res.status(200).json({
-      status: "ok",
-      data: { access: newAccessToken },
+      data: { access: accessToken },
     });
   } catch (err) {
     res.status(500).json({ status: "error", message: err.message });
@@ -107,23 +62,7 @@ const refresh = async (req, res) => {
 
 // POST /api/auth/logout
 const logout = async (req, res) => {
-  try {
-    const { token } = req.body;
-
-    if (!token) {
-      return res.status(400).json({ status: "error", message: "Refresh token missing" });
-    }
-
-    const user = await User.findOne({ refreshToken: token });
-    if (user) {
-      user.refreshToken = null;
-      await user.save();
-    }
-
-    res.status(200).json({ status: "ok", message: "Logged out successfully" });
-  } catch (err) {
-    res.status(500).json({ status: "error", message: err.message });
-  }
+  res.status(200).json({ status: "ok", message: "Logged out successfully" });
 };
 
-export { register, login, refresh, logout };
+export { register, login, logout };
