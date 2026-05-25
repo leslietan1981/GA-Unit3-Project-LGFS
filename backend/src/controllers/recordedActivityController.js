@@ -1,6 +1,6 @@
 import express from "express";
 import RecordedActivityModel from "../models/RecordedActivityModel.js";
-import { getErrorObj, setErrorObj } from "../utils/appUtils.js";
+import { getErrorObj, getResponseJSON, setErrorObj } from "../utils/appUtils.js";
 
 const devActivityTypes = [
   {
@@ -19,7 +19,7 @@ const devActivityTypes = [
 
 export const getActivityTypes = async (req, res, next) => {
   try {
-    res.json(devActivityTypes);
+    res.json(getResponseJSON(devActivityTypes));
   } catch (error) {
     return next(setErrorObj(error, 400, "failed to get activity types"));
   }
@@ -41,7 +41,7 @@ export const createRecordedActivity = async (req, res, next) => {
       comments: req.body.comments,
     });
 
-    res.json("recorded-activity created");
+    res.json(getResponseJSON(undefined, "recorded-activity created"));
   } catch (error) {
     return next(setErrorObj(error, 400, "failed to create recorded-activity"));
   }
@@ -50,7 +50,7 @@ export const createRecordedActivity = async (req, res, next) => {
 export const getRecordedActivities = async (req, res, next) => {
   try {
     const activities = await RecordedActivityModel.find();
-    res.json(activities);
+    res.json(getResponseJSON(activities));
   } catch (error) {
     return next(setErrorObj(error, 400, "failed to get recorded-activities"));
   }
@@ -70,7 +70,7 @@ export const getRecordedActivityById = async (req, res, next) => {
       );
     }
 
-    res.json(activityFound);
+    res.json(getResponseJSON(activityFound));
   } catch (error) {
     return next(setErrorObj(error, 400, "failed to get recorded-activity"));
   }
@@ -100,7 +100,7 @@ export const updateRecordedActivityById = async (req, res, next) => {
 
     await activityFound.save();
 
-    res.json("recorded-activity updated");
+    res.json(getResponseJSON(undefined, "recorded-activity updated"));
   } catch (error) {
     return next(setErrorObj(error, 400, "failed to update recorded-activity"));
   }
@@ -122,7 +122,7 @@ export const deleteRecordedActivityById = async (req, res, next) => {
 
     await activityFound.deleteOne();
 
-    res.json("recorded_activity deleted");
+    res.json(getResponseJSON(undefined, "recorded-activity deleted"));
   } catch (error) {
     return next(setErrorObj(error, 400, "failed to delete recorded-activity"));
   }
