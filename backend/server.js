@@ -2,13 +2,16 @@ import dotenv from "dotenv";
 dotenv.config();
 
 import express from "express";
+import cors from "cors";
 import connectDB from "./src/db/db.js";
-// import authRouter from "./src/routers/authRouter.js";
+import authRouter from "./src/routers/authRouter.js";
+import userRouter from "./src/routers/userRouter.js";
 
 connectDB();
 
 const app = express();
 
+app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -30,9 +33,10 @@ app.use((err, req, res, next) => {
   next(err);
 });
 
-// app.use("/api", authRouter);
+app.use("/api", authRouter);
+app.use("/api", userRouter);
 
-app.listen(5001);
+app.listen(5001, () => console.log("Server running on port 5001"));
 
 app.use((err, req, res, next) => {
   console.error("Unhandled error:", err);
