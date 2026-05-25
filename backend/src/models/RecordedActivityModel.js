@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const RecordedActivitySchema = new mongoose.Schema(
   {
+    user_id: { type: mongoose.Schema.Types.ObjectId, required: true },
     type: { type: String, required: true },
     activity_date: { type: Date, required: true },
     distance_m: { type: Number },
