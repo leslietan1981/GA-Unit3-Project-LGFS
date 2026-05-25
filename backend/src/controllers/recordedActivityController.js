@@ -1,25 +1,12 @@
 import express from "express";
 import RecordedActivityModel from "../models/RecordedActivityModel.js";
 import { getErrorObj, getResponseJSON, setErrorObj } from "../utils/appUtils.js";
-
-const devActivityTypes = [
-  {
-    type: "Running",
-  },
-  {
-    type: "Swimming",
-  },
-  {
-    type: "Climbing",
-  },
-  {
-    type: "Cycling",
-  },
-];
+import ActivityConfigModel from "../models/ActivityConfigModel.js";
 
 export const getActivityTypes = async (req, res, next) => {
   try {
-    res.json(getResponseJSON(devActivityTypes));
+    const activityTypes = await ActivityConfigModel.find().select({ _id: 0, type: 1 });
+    res.json(getResponseJSON(activityTypes));
   } catch (error) {
     return next(setErrorObj(error, 400, "failed to get activity types"));
   }
@@ -29,6 +16,11 @@ export const createRecordedActivity = async (req, res, next) => {
   try {
     // user_id is currently dev test data, to be replaced with id from decoded jwt token when auth is ready
     const user_id = "6a10079fd954accc43a64c42";
+
+    const activityTypes = await ActivityConfigModel.find().select({ _id: 0, type: 1 });
+    if (!activityTypes.some((item) => item.type === req.body.type)) {
+      return next(getErrorObj(409, "type not valid"));
+    }
 
     await RecordedActivityModel.create({
       user_id,
@@ -80,6 +72,11 @@ export const updateRecordedActivityById = async (req, res, next) => {
   try {
     // user_id is currently dev test data, to be replaced with id from decoded jwt token when auth is ready
     const user_id = "6a10079fd954accc43a64c42";
+
+    const activityTypes = await ActivityConfigModel.find().select({ _id: 0, type: 1 });
+    if (!activityTypes.some((item) => item.type === req.body.type)) {
+      return next(getErrorObj(409, "type not valid"));
+    }
 
     const activityFound = await RecordedActivityModel.findById(req.body.recorded_activity_id);
     if (!activityFound) {
