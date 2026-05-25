@@ -3,7 +3,10 @@ dotenv.config();
 
 import express from "express";
 import connectDB from "./src/db/db.js";
+
 // import authRouter from "./src/routers/authRouter.js";
+
+import recordedActivityRouter from "./src/routers/recordedActivityRouter.js";
 
 connectDB();
 
@@ -30,7 +33,10 @@ app.use((err, req, res, next) => {
   next(err);
 });
 
+const apiBase = "/api";
+
 // app.use("/api", authRouter);
+app.use(apiBase + "/activities", recordedActivityRouter);
 
 app.listen(5001);
 
