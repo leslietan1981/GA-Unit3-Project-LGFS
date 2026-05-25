@@ -7,6 +7,7 @@ import connectDB from "./src/db/db.js";
 // import authRouter from "./src/routers/authRouter.js";
 
 import recordedActivityRouter from "./src/routers/recordedActivityRouter.js";
+import activityConfigRouter from "./src/routers/activityConfigRouter.js";
 
 connectDB();
 
@@ -37,6 +38,7 @@ const apiBase = "/api";
 
 // app.use("/api", authRouter);
 app.use(apiBase + "/activities", recordedActivityRouter);
+app.use(apiBase + "/activities", activityConfigRouter);
 
 app.listen(5001);
 
