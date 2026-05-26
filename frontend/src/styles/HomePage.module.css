@@ -1,0 +1,86 @@
+.app-wrapper {
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: 1fr min-content 1fr;
+  width: 100%;
+}
+
+.app-container {
+  display: grid;
+  margin: 0 1rem;
+}
+
+.user-dashboard {
+  display: grid;
+  grid-template-columns: 1fr min-content 1fr;
+  min-width: 1200px;
+  background-color: aliceblue;
+}
+
+.nav-container {
+  padding: 0.5rem 2rem;
+  display: flex;
+  align-items: center;
+  column-gap: 2rem;
+  background-color: aliceblue;
+  border-bottom: 1px solid rgb(230, 238, 245);
+}
+
+.nav-container a {
+  color: black;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.nav-container a:hover {
+  cursor: pointer;
+  text-decoration: underline #cc2c29 solid 3px;
+  text-underline-offset: 6px;
+}
+
+.nav-container a::after {
+  content: attr(data-text);
+  height: 0;
+  visibility: hidden;
+  overflow: hidden;
+  user-select: none;
+  pointer-events: none;
+  font-weight: 600;
+}
+
+.nav-logo {
+  height: 3rem;
+  margin-top: 0.7rem;
+}
+
+.nav-links {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+}
+
+.nav-primary {
+  display: flex;
+  column-gap: 2rem;
+}
+
+.nav-secondary {
+  display: flex;
+  column-gap: 0.5rem;
+}
+
+.profile-link {
+  display: flex;
+  align-items: center;
+  column-gap: 0.5rem;
+  margin-right: auto;
+}
+
+.profile-img {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  object-fit: cover;
+}
