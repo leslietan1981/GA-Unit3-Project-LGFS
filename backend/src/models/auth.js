@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { RecordedActivitySchema } from "./RecordedActivityModel.js";
 
 const userSchema = new mongoose.Schema(
   {
@@ -26,12 +27,9 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-    refreshToken: {
-      type: String,
-      default: null,
-    },
+    recorded_activities: { type: [RecordedActivitySchema], default: [] },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const User = mongoose.model("User", userSchema);
