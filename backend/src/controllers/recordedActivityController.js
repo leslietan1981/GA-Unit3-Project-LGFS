@@ -2,6 +2,7 @@ import express from "express";
 import RecordedActivityModel from "../models/RecordedActivityModel.js";
 import { getErrorObj, getResponseJSON, setErrorObj } from "../utils/appUtils.js";
 import ActivityConfigModel from "../models/ActivityConfigModel.js";
+import UserModel from "../models/auth.js";
 
 export const getActivityTypes = async (req, res, next) => {
   try {
@@ -14,16 +15,17 @@ export const getActivityTypes = async (req, res, next) => {
 
 export const createRecordedActivity = async (req, res, next) => {
   try {
-    // user_id is currently dev test data, to be replaced with id from decoded jwt token when auth is ready
-    const user_id = "6a10079fd954accc43a64c42";
-
-    const activityTypes = await ActivityConfigModel.find().select({ _id: 0, type: 1 });
-    if (!activityTypes.some((item) => item.type === req.body.type)) {
-      return next(getErrorObj(409, "type not valid"));
+    const activityTypeFound = await ActivityConfigModel.findOne({ type: req.body.type });
+    if (!activityTypeFound) {
+      return next(getErrorObj(400, "invalid activity type"));
     }
 
-    await RecordedActivityModel.create({
-      user_id,
+    const userFound = await UserModel.findById(req.body.user_id);
+    if (!userFound) {
+      return next(getErrorObj(400, "user not found"));
+    }
+
+    const newRecord = {
       type: req.body.type,
       activity_date: req.body.activity_date,
       distance_m: req.body.distance_m,
@@ -31,7 +33,10 @@ export const createRecordedActivity = async (req, res, next) => {
       laps: req.body.laps,
       intensity_level: req.body.intensity_level,
       comments: req.body.comments,
-    });
+    };
+
+    userFound.recorded_activities.push(newRecord);
+    await userFound.save();
 
     res.json(getResponseJSON(undefined, "recorded-activity created"));
   } catch (error) {
@@ -41,8 +46,12 @@ export const createRecordedActivity = async (req, res, next) => {
 
 export const getRecordedActivities = async (req, res, next) => {
   try {
-    const activities = await RecordedActivityModel.find();
-    res.json(getResponseJSON(activities));
+    const userFound = await UserModel.findById(req.body.user_id);
+    if (!userFound) {
+      return next(getErrorObj(400, "user not found"));
+    }
+
+    res.json(getResponseJSON(userFound.recorded_activities));
   } catch (error) {
     return next(setErrorObj(error, 400, "failed to get recorded-activities"));
   }
@@ -50,16 +59,14 @@ export const getRecordedActivities = async (req, res, next) => {
 
 export const getRecordedActivityById = async (req, res, next) => {
   try {
-    // user_id is currently dev test data, to be replaced with id from decoded jwt token when auth is ready
-    const user_id = "6a10079fd954accc43a64c42";
+    const userFound = await UserModel.findById(req.body.user_id);
+    if (!userFound) {
+      return next(getErrorObj(400, "user not found"));
+    }
 
-    const activityFound = await RecordedActivityModel.findById(req.body.recorded_activity_id);
+    const activityFound = userFound.recorded_activities.id(req.body.recorded_activity_id);
     if (!activityFound) {
       return next(getErrorObj(404, "recorded-activity not found"));
-    } else if (!activityFound.user_id.equals(user_id)) {
-      return next(
-        getErrorObj(403, "not authorized", "not authorized to view: recorded-activity does not belong to the user"),
-      );
     }
 
     res.json(getResponseJSON(activityFound));
@@ -70,32 +77,31 @@ export const getRecordedActivityById = async (req, res, next) => {
 
 export const updateRecordedActivityById = async (req, res, next) => {
   try {
-    // user_id is currently dev test data, to be replaced with id from decoded jwt token when auth is ready
-    const user_id = "6a10079fd954accc43a64c42";
-
-    const activityTypes = await ActivityConfigModel.find().select({ _id: 0, type: 1 });
-    if (!activityTypes.some((item) => item.type === req.body.type)) {
-      return next(getErrorObj(409, "type not valid"));
+    const userFound = await UserModel.findById(req.body.user_id);
+    if (!userFound) {
+      return next(getErrorObj(400, "user not found"));
     }
 
-    const activityFound = await RecordedActivityModel.findById(req.body.recorded_activity_id);
+    const activityFound = userFound.recorded_activities.id(req.body.recorded_activity_id);
     if (!activityFound) {
       return next(getErrorObj(404, "recorded-activity not found"));
-    } else if (!activityFound.user_id.equals(user_id)) {
-      return next(
-        getErrorObj(403, "not authorized", "not authorized to patch: recorded-activity does not belong to the user"),
-      );
     }
 
-    if (req.body.type) activityFound.type = req.body.type;
-    if (req.body.activity_date) activityFound.activity_date = req.body.activity_date;
-    if (req.body.distance_m) activityFound.distance_m = req.body.distance_m;
-    if (req.body.duration_ms) activityFound.duration_ms = req.body.duration_ms;
-    if (req.body.laps) activityFound.laps = req.body.laps;
-    if (req.body.intensity_level) activityFound.intensity_level = req.body.intensity_level;
-    if (req.body.comments) activityFound.comments = req.body.comments;
+    if ("type" in req.body) {
+      const activityTypeFound = await ActivityConfigModel.findOne({ type: req.body.type });
+      if (!activityTypeFound) {
+        return next(getErrorObj(400, "invalid activity type"));
+      }
+      activityFound.type = req.body.type;
+    }
+    if ("activity_date" in req.body) activityFound.activity_date = req.body.activity_date;
+    if ("distance_m" in req.body) activityFound.distance_m = req.body.distance_m;
+    if ("duration_ms" in req.body) activityFound.duration_ms = req.body.duration_ms;
+    if ("laps" in req.body) activityFound.laps = req.body.laps;
+    if ("intensity_level" in req.body) activityFound.intensity_level = req.body.intensity_level;
+    if ("comments" in req.body) activityFound.comments = req.body.comments;
 
-    await activityFound.save();
+    await userFound.save();
 
     res.json(getResponseJSON(undefined, "recorded-activity updated"));
   } catch (error) {
@@ -105,19 +111,17 @@ export const updateRecordedActivityById = async (req, res, next) => {
 
 export const deleteRecordedActivityById = async (req, res, next) => {
   try {
-    // user_id is currently dev test data, to be replaced with id from decoded jwt token when auth is ready
-    const user_id = "6a10079fd954accc43a64c42";
-
-    const activityFound = await RecordedActivityModel.findById(req.body.recorded_activity_id);
-    if (!activityFound) {
-      return next(getErrorObj(404, "recorded-activity not found"));
-    } else if (!activityFound.user_id.equals(user_id)) {
-      return next(
-        getErrorObj(403, "not authorized", "not authorized to delete: recorded-activity does not belong to the user"),
-      );
+    const userFound = await UserModel.findById(req.body.user_id);
+    if (!userFound) {
+      return next(getErrorObj(400, "user not found"));
     }
 
-    await activityFound.deleteOne();
+    const activityFound = userFound.recorded_activities.pull(req.body.recorded_activity_id);
+    if (!activityFound) {
+      return next(getErrorObj(404, "recorded-activity not found"));
+    }
+
+    userFound.save();
 
     res.json(getResponseJSON(undefined, "recorded-activity deleted"));
   } catch (error) {
