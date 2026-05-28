@@ -47,8 +47,9 @@ const devData = [
 const RecordedActivityPanel = () => {
   return (
     <div className={`${css["rec-activity-panel"]}`}>
+      <div className={`${css["panel-header"]}`}>Activity Feeds</div>
       {devData.map((item) => (
-        <RecordedActivityCard data={item} />
+        <RecordedActivityCard key={item._id} data={item} />
       ))}
     </div>
   );
