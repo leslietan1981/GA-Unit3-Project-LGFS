@@ -11,49 +11,27 @@ const getAllUsers = async (req, res) => {
   }
 };
 
-const promoteUser = async (req, res) => {
+const updateUser = async (req, res) => {
   try {
-    const user = await User.findById(req.body.id);
+    const user = await User.findById(req.body.user_id);
     if (!user) {
       return res
         .status(404)
         .json({ status: "error", message: "User not found" });
     }
 
-    if (user.role === "admin") {
+    if (!("role" in req.body)) {
       return res
-        .status(409)
-        .json({ status: "error", message: "User is already an admin" });
+        .status(400)
+        .json({ status: "error", message: "No valid fields provided" });
     }
 
-    user.role = "admin";
+    user.role = req.body.role;
     await user.save();
 
-    res.status(200).json({ status: "ok", message: "User promoted to admin" });
-  } catch (err) {
-    res.status(500).json({ status: "error", message: err.message });
-  }
-};
-
-const revokeUser = async (req, res) => {
-  try {
-    const user = await User.findById(req.body.id);
-    if (!user) {
-      return res
-        .status(404)
-        .json({ status: "error", message: "User not found" });
-    }
-
-    if (user.role === "user") {
-      return res
-        .status(409)
-        .json({ status: "error", message: "User is already a regular user" });
-    }
-
-    user.role = "user";
-    await user.save();
-
-    res.status(200).json({ status: "ok", message: "Admin rights revoked" });
+    res
+      .status(200)
+      .json({ status: "ok", message: "Account access updated successfully" });
   } catch (err) {
     res.status(500).json({ status: "error", message: err.message });
   }
@@ -61,21 +39,21 @@ const revokeUser = async (req, res) => {
 
 const deleteUser = async (req, res) => {
   try {
-    const user = await User.findById(req.body.id);
+    const user = await User.findById(req.body.user_id);
     if (!user) {
       return res
         .status(404)
         .json({ status: "error", message: "User not found" });
     }
 
-    if (req.user.id === req.body.id) {
+    if (req.user.id === req.body.user_id) {
       return res.status(403).json({
         status: "error",
         message: "You cannot delete your own account",
       });
     }
 
-    await User.findByIdAndDelete(req.body.id);
+    await User.findByIdAndDelete(req.body.user_id);
 
     res.status(200).json({ status: "ok", message: "User deleted" });
   } catch (err) {
@@ -96,7 +74,7 @@ const deleteMe = async (req, res) => {
 
 const getMe = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id, "-password -refreshToken");
+    const user = await User.findById(req.body.user_id);
     if (!user) {
       return res
         .status(404)
@@ -114,9 +92,13 @@ const updateMe = async (req, res) => {
     const updateDetails = {};
 
     if ("displayName" in req.body)
-      updateDetails.displayName = req.body.displayName;
-    if ("profilePicture" in req.body)
-      updateDetails.profilePicture = req.body.profilePicture;
+      updateDetails.displayName = req.body.display_name;
+    if ("password" in req.body)
+      updateDetails.password = await bcrypt.hash(req.body.password, 12);
+    if ("username" in req.body) updateDetails.username = req.body.username;
+
+    // if ("profilePicture" in req.body)
+    //   updateDetails.profilePicture = req.body.profilePicture;
 
     if (Object.keys(updateDetails).length === 0) {
       return res
@@ -125,14 +107,10 @@ const updateMe = async (req, res) => {
     }
 
     const updatedUser = await User.findByIdAndUpdate(
-      req.user.id,
+      req.body.user_id,
       updateDetails,
-      { new: true, runValidators: true, select: "-password -refreshToken" },
     );
-
-    res
-      .status(200)
-      .json({ status: "ok", message: "Profile updated", data: updatedUser });
+    res.status(200).json({ status: "ok", message: "Profile updated" });
   } catch (err) {
     res.status(500).json({ status: "error", message: err.message });
   }
@@ -169,8 +147,7 @@ const changePassword = async (req, res) => {
 
 export {
   getAllUsers,
-  promoteUser,
-  revokeUser,
+  updateUser,
   deleteUser,
   deleteMe,
   getMe,

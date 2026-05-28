@@ -1,8 +1,7 @@
 import { Router } from "express";
 import {
   getAllUsers,
-  promoteUser,
-  revokeUser,
+  updateUser,
   deleteUser,
   deleteMe,
   getMe,
@@ -22,19 +21,8 @@ router.patch("/accounts/password", verifyToken, changePassword);
 
 // Admin routes — verifyToken + isAdmin
 router.get("/admin/accounts", verifyToken, isAdmin, getAllUsers);
-router.patch(
-  "/admin/accounts/access/promote",
-  verifyToken,
-  isAdmin,
-  promoteUser,
-);
-router.patch(
-  "/admin/accounts/access/:id/revoke",
-  verifyToken,
-  isAdmin,
-  revokeUser,
-);
-router.delete("/admin/accounts/:id", verifyToken, isAdmin, deleteUser);
-router.delete("/accounts/delete", verifyToken, deleteMe);
+router.patch("/admin/accounts/access", verifyToken, isAdmin, updateUser);
+
+router.delete("/admin/accounts", verifyToken, isAdmin, deleteUser);
 
 export default router;
