@@ -1,6 +1,8 @@
 import React from "react";
 import css from "../styles/HomePage.module.css";
 import UserNavBar from "./UserNavBar.jsx";
+import RecordedActivityCard from "./RecordedActivityCard.jsx";
+import RecordedActivityPanel from "./RecordedActivityPanel.jsx";
 
 const HomePage = () => {
   return (
@@ -10,7 +12,7 @@ const HomePage = () => {
         <UserNavBar />
         <div className={`${css["user-dashboard"]}`}>
           <div>LEFT</div>
-          <div>CENTER</div>
+          <RecordedActivityPanel />
           <div>RIGHT</div>
         </div>
       </div>
