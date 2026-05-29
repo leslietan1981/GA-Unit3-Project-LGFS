@@ -110,16 +110,17 @@ export const updateRecordedActivityById = async (req, res, next) => {
 
 export const deleteRecordedActivityById = async (req, res, next) => {
   try {
-    const userFound = await UserModel.findById(req.body.user_id);
+    const userFound = await UserModel.findById(req.user.id);
     if (!userFound) {
       return next(getErrorObj(400, "user not found"));
     }
 
-    const activityFound = userFound.recorded_activities.pull(req.body.recorded_activity_id);
+    const activityFound = userFound.recorded_activities.id(req.body.recorded_activity_id);
     if (!activityFound) {
       return next(getErrorObj(404, "recorded-activity not found"));
     }
 
+    userFound.recorded_activities.pull(req.body.recorded_activity_id);
     userFound.save();
 
     res.json(getResponseJSON(undefined, "recorded-activity deleted"));
