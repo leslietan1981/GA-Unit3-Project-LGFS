@@ -19,7 +19,7 @@ export const createRecordedActivity = async (req, res, next) => {
       return next(getErrorObj(400, "invalid activity type"));
     }
 
-    const userFound = await UserModel.findById(req.body.user_id);
+    const userFound = await UserModel.findById(req.user.id);
     if (!userFound) {
       return next(getErrorObj(400, "user not found"));
     }
