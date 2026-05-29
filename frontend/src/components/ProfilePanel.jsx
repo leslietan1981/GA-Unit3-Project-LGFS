@@ -3,6 +3,8 @@ import css from "../styles/HomePage.module.css";
 import { getProfileIcon } from "../utils/profileUtils.js";
 
 const ProfilePanel = () => {
+  const activitiesCount = 100;
+  const activitiesDuration = "100 hours";
   return (
     <div className={css["profile-panel"]}>
       <div className={`${css["panel-header"]} ${css["panel-header-profile"]}`}>&nbsp;</div>
@@ -12,11 +14,11 @@ const ProfilePanel = () => {
         <div className={`${css["stat-list"]}`}>
           <div className={`${css["stat"]} ${css["stat-list-profile"]}`}>
             <div className={`${css["stat-label"]}`}>Activities</div>
-            <div className={`${css["stat-value"]}`}>100</div>
+            <div className={`${css["stat-value"]}`}>{activitiesCount}</div>
           </div>
           <div className={`${css["stat"]} ${css["stat-list-profile"]}`}>
             <div className={`${css["stat-label"]}`}>Duration</div>
-            <div className={`${css["stat-value"]}`}>100 hours</div>
+            <div className={`${css["stat-value"]}`}>{activitiesDuration}</div>
           </div>
         </div>
       </div>
@@ -25,7 +27,7 @@ const ProfilePanel = () => {
           <div className={`${css["stat"]} ${css["stat-list-profile"]}`}>
             <div className={`${css["stat-label"]}`}>Latest activity</div>
             <div className={`${css["stat-value"]}`}>
-              Running - <span>2026-05-28</span>
+              Running <span>:: 2026-05-28</span>
             </div>
           </div>
         </div>

@@ -18,7 +18,7 @@
   display: grid;
   grid-template-columns: 1fr min-content 1fr;
   min-width: 1200px;
-  background-color: #f8f8f8;
+  background-color: #f1f1f1;
   overflow-y: auto;
   min-height: 0;
   padding: 1rem 0;
@@ -100,7 +100,7 @@
 }
 
 .rec-activity-card-container {
-  background-color: antiquewhite;
+  background-color: #f8f8f8;
   padding: 1rem;
   display: flex;
   flex-direction: column;
@@ -133,17 +133,17 @@
 }
 
 .header-title {
-  font-weight: 700;
-  font-size: 0.8rem;
+  font-weight: 600;
+  font-size: 0.9rem;
 }
 
 .header-sub {
-  font-size: 0.8rem;
+  font-size: 0.7rem;
 }
 
 .comment {
-  font-weight: 700;
-  font-size: 1rem;
+  font-weight: 600;
+  font-size: 1.4rem;
 }
 
 .stat-list {
@@ -161,12 +161,12 @@
 }
 
 .stat-label {
-  font-size: 0.8rem;
+  font-size: 0.7rem;
 }
 
 .stat-value {
-  font-weight: 700;
-  font-size: 1rem;
+  font-weight: 500;
+  font-size: 1.2rem;
 }
 
 .stat-value span {
@@ -185,7 +185,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background-color: antiquewhite;
+  background-color: #f8f8f8;
   padding: 1rem 0;
 }
 
@@ -212,7 +212,7 @@
 }
 
 .greeting {
-  font-size: 1rem;
-  font-weight: 700;
+  font-size: 1.4rem;
+  font-weight: 600;
   padding-bottom: 1rem;
 }
