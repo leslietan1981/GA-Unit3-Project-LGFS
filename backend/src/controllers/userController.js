@@ -3,7 +3,7 @@ import User from "../models/auth.js";
 
 const getAllUsers = async (req, res) => {
   try {
-    const users = await User.find({}, "-password -refreshToken");
+    const users = await User.find({}, "-password");
 
     res.status(200).json({ status: "ok", data: users });
   } catch (err) {
@@ -96,9 +96,6 @@ const updateMe = async (req, res) => {
     if ("password" in req.body)
       updateDetails.password = await bcrypt.hash(req.body.password, 12);
     if ("username" in req.body) updateDetails.username = req.body.username;
-
-    // if ("profilePicture" in req.body)
-    //   updateDetails.profilePicture = req.body.profilePicture;
 
     if (Object.keys(updateDetails).length === 0) {
       return res
