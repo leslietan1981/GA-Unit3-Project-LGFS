@@ -76,7 +76,7 @@ export const getRecordedActivityById = async (req, res, next) => {
 
 export const updateRecordedActivityById = async (req, res, next) => {
   try {
-    const userFound = await UserModel.findById(req.body.user_id);
+    const userFound = await UserModel.findById(req.user.id);
     if (!userFound) {
       return next(getErrorObj(400, "user not found"));
     }
