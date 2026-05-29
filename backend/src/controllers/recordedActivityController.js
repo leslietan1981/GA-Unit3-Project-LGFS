@@ -1,5 +1,4 @@
 import express from "express";
-import RecordedActivityModel from "../models/RecordedActivityModel.js";
 import { getErrorObj, getResponseJSON, setErrorObj } from "../utils/appUtils.js";
 import ActivityConfigModel from "../models/ActivityConfigModel.js";
 import UserModel from "../models/auth.js";

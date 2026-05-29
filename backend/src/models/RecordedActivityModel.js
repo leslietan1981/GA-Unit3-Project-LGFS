@@ -17,4 +17,4 @@ export const RecordedActivitySchema = new mongoose.Schema(
   { collection: "recordedActivities" },
 );
 
-export default mongoose.model("RecordedActivity", RecordedActivitySchema);
+// export default mongoose.model("RecordedActivity", RecordedActivitySchema);
