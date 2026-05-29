@@ -9,9 +9,7 @@ const register = async (req, res) => {
 
     const existingUser = await User.findOne({ username });
     if (existingUser) {
-      return res
-        .status(409)
-        .json({ status: "error", message: "Username already taken" });
+      return res.status(409).json({ status: "error", message: "Username already taken" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
@@ -38,20 +36,16 @@ const login = async (req, res) => {
 
     const user = await User.findOne({ username });
     if (!user) {
-      return res
-        .status(401)
-        .json({ status: "error", message: "Invalid credentials" });
+      return res.status(401).json({ status: "error", message: "Invalid credentials" });
     }
 
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
-      return res
-        .status(401)
-        .json({ status: "error", message: "Invalid credentials" });
+      return res.status(401).json({ status: "error", message: "Invalid credentials" });
     }
 
     const accessToken = jwt.sign(
-      { id: user.user_id, username: user.username, role: user.role },
+      { id: user._id, username: user.username, role: user.role },
       process.env.ACCESS_SECRET,
       { expiresIn: "1d" },
     );
