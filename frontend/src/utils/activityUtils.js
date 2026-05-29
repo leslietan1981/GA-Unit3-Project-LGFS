@@ -35,3 +35,9 @@ export const getDurationString = (durationMs) => {
 
   return result;
 };
+
+export const getDurationStringInHours = (durationMs) => {
+  const hours = Math.floor(durationMs / (1000 * 60 * 60));
+  const correctedToNearestHalves = Math.round(hours * 2) / 2;
+  return correctedToNearestHalves + (correctedToNearestHalves > 1 ? " hours" : " hour");
+};
