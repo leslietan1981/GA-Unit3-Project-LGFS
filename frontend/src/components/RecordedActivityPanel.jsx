@@ -1,59 +1,44 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import RecordedActivityCard from "./RecordedActivityCard.jsx";
 import css from "../styles/HomePage.module.css";
+import { getBearerHeader, sharedFetch, userEndpoints } from "../utils/fetchingUtils.js";
+import UserContext from "../context/UserContext.js";
+import { getAsset, iconAddSrc } from "../utils/assetUtils.js";
 
-const devData = [
-  {
-    type: "Running",
-    activity_date: "2026-05-28T04:57:37.109Z",
-    distance_m: 1000,
-    duration_ms: 3600000,
-    laps: 1,
-    intensity_level: 1,
-    comments: "This is the comments",
-    _id: "6a17cb41ba9f304d4665c6ac",
-    created_at: "2026-05-28T04:57:37.118Z",
-  },
-  {
-    type: "Climbing",
-    activity_date: "2026-05-28T04:57:53.836Z",
-    distance_m: 1000,
-    duration_ms: 3600000,
-    laps: 1,
-    intensity_level: 1,
-    comments: "This is the comments",
-    _id: "6a17cb51ba9f304d4665c6af",
-    created_at: "2026-05-28T04:57:53.842Z",
-  },
-  {
-    type: "Swimming",
-    activity_date: "2026-05-28T04:57:58.961Z",
-    distance_m: 1000,
-    duration_ms: 3600000,
-    laps: 1,
-    intensity_level: 1,
-    comments: "This is the comments",
-    _id: "6a17cb56ba9f304d4665c6b2",
-    created_at: "2026-05-28T04:57:58.966Z",
-  },
-  {
-    type: "Flying",
-    activity_date: "2026-05-28T04:58:03.306Z",
-    distance_m: 1000,
-    duration_ms: 3600000,
-    laps: 1,
-    intensity_level: 1,
-    comments: "This is the comments",
-    _id: "6a17cb5bba9f304d4665c6b6",
-    created_at: "2026-05-28T04:58:03.312Z",
-  },
-];
+const RecordedActivityPanel = (props) => {
+  const userCtx = useContext(UserContext);
+  const fetchData = sharedFetch();
 
-const RecordedActivityPanel = () => {
+  const [activities, setActivities] = useState([]);
+
+  const getActivities = async () => {
+    const res = await fetchData(userEndpoints.getRecordedActivities, "GET", {
+      auth: getBearerHeader(userCtx.accessToken),
+    });
+
+    if (!res.ok && res.status === 401) {
+      console.log(res.status, res.message);
+      if (props.handleNotAuth) props.handleNotAuth();
+      return;
+    }
+
+    const sorted = res.data?.result.toSorted((a, b) => new Date(b.activity_date) - new Date(a.activity_date));
+    setActivities(sorted);
+  };
+
+  useEffect(() => {
+    getActivities();
+  }, []);
+
   return (
     <div className={`${css["rec-activity-panel"]}`}>
-      <div className={`${css["panel-header"]}`}>Activity Feeds</div>
-      {devData.map((item) => (
+      <div>
+        <div className={`${css["panel-header"]}`}>Activity Feeds</div>
+        <button className={`${css["action-icon-button"]}`}>
+          <img className={`${css["button-icon"]}`} src={getAsset(iconAddSrc)} alt={`add activitiy icon`} />
+        </button>
+      </div>
+      {activities.map((item) => (
         <RecordedActivityCard key={item._id} data={item} />
       ))}
     </div>

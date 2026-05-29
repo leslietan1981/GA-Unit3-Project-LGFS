@@ -2,8 +2,7 @@ import React from "react";
 import css from "../styles/HomePage.module.css";
 import { getActivityIcon, getDurationString, getIntensityString } from "../utils/activityUtils.js";
 import { formatForDateTimeLocal, getDateAndTime } from "../utils/dateUtils.js";
-
-import editIcon from "../assets/images/FeEdit.svg";
+import { getAsset, iconEditSrc } from "../utils/assetUtils.js";
 
 const devConfig = {
   status: "ok",
@@ -36,7 +35,9 @@ const RecordedActivityCard = (props) => {
             <div className={`${css["header-sub"]}`}>{getDateAndTime(formatForDateTimeLocal(activity_date))[0]}</div>
           </div>
         </div>
-        <img className={`${css["edit-icon"]}`} src={editIcon} alt="edit icon" />
+        <button className={`${css["action-icon-button"]}`}>
+          <img className={`${css["button-icon"]}`} src={getAsset(iconEditSrc)} alt="edit icon" />
+        </button>
       </div>
       <div className={`${css["comment"]}`}>{comments}</div>
       <div className={`${css["stat-list"]}`}>
