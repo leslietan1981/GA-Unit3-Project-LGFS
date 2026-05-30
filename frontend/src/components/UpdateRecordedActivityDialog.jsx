@@ -5,7 +5,7 @@ import StatDateInput from "./StatDateInput.jsx";
 import StatTextInput from "./StatTextInput.jsx";
 import StatMultiTextInput from "./StatMultiTextInput.jsx";
 import StatTextarea from "./StatTextarea.jsx";
-import { getAsset, iconCloseSrc } from "../utils/assetUtils.js";
+import { getAsset, iconCloseSrc, iconDeleteSrc } from "../utils/assetUtils.js";
 import { getBearerHeader, sharedFetch, userEndpoints } from "../utils/fetchingUtils.js";
 import UserContext from "../context/UserContext.js";
 import { getDurationArray, getDurationInMs } from "../utils/activityUtils.js";
@@ -16,6 +16,13 @@ const intensityMappings = [
   { name: "Medium", value: 2 },
   { name: "High", value: 3 },
 ];
+
+const defaultConfig = {
+  distance_m_toggle: true,
+  duration_ms_toggle: true,
+  laps_toggle: true,
+  intensity_level_toggle: true,
+};
 
 const UpdateRecordedActivityDialog = (props) => {
   const userCtx = useContext(UserContext);
@@ -122,7 +129,7 @@ const UpdateRecordedActivityDialog = (props) => {
 
   useEffect(() => {
     if (activity.configs.length > 0) {
-      const config = activity.configs.find((item) => item.type === type);
+      const config = activity.configs.find((item) => item.type === type) || defaultConfig;
       updateToggles(config);
     }
   }, [type]);
@@ -143,12 +150,29 @@ const UpdateRecordedActivityDialog = (props) => {
     if (showLaps) body.laps = laps;
     if (showIntensity) body.intensity_level = intensity;
 
-    const res = await fetchData(userEndpoints.updateRecordedActivityById, "PUT", {
+    const res = await fetchData(userEndpoints.updateRecordedActivityById, "PATCH", {
       auth: getBearerHeader(userCtx.accessToken),
       body,
     });
     if (!res.ok) {
       console.log("failed to update activity");
+      return;
+    }
+
+    props.onClose(true);
+  };
+
+  const handleDelete = () => {
+    deleteActivity();
+  };
+
+  const deleteActivity = async () => {
+    const res = await fetchData(userEndpoints.deleteRecordedActivityById, "DELETE", {
+      auth: getBearerHeader(userCtx.accessToken),
+      body: { recorded_activity_id: props.id },
+    });
+    if (!res.ok) {
+      console.log("failed to delete activity");
       return;
     }
 
@@ -213,13 +237,20 @@ const UpdateRecordedActivityDialog = (props) => {
             )}
           </div>
           <StatTextarea title="Comment" value={comments} setValue={setComments} size={css["stat-input-lg"]} />
-          <div>
-            <button className={css["text-button"]} onClick={handleUpdate}>
-              Update
-            </button>
-            <button className={css["text-button-cancel"]} onClick={props.onClose}>
-              Cancel
-            </button>
+          <div className={css["dialog-footer"]}>
+            <div>
+              <button className={css["text-button"]} onClick={handleUpdate}>
+                Update
+              </button>
+              <button className={css["text-button-cancel"]} onClick={props.onClose}>
+                Cancel
+              </button>
+            </div>
+            <div>
+              <button className={`${css["action-icon-button"]} ${css["button-border"]}`} onClick={handleDelete}>
+                <img className={css["button-icon"]} src={getAsset(iconDeleteSrc)} alt={`trash icon`} />
+              </button>
+            </div>
           </div>
         </div>
       )}

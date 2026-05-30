@@ -383,3 +383,9 @@ textarea:focus {
 .dialog-row > * {
   width: 15rem;
 }
+
+.dialog-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
