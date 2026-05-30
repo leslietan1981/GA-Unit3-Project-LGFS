@@ -5,7 +5,7 @@ import UserModel from "../models/auth.js";
 
 export const getActivityTypes = async (req, res, next) => {
   try {
-    const activityTypes = await ActivityConfigModel.find().select({ _id: 0, type: 1 });
+    const activityTypes = await ActivityConfigModel.find().select({ _id: 0, __v: 0, created_at: 0 });
     res.json(getResponseJSON(activityTypes));
   } catch (error) {
     return next(setErrorObj(error, 400, "failed to get activity types"));

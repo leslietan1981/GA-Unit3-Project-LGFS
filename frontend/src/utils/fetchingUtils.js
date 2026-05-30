@@ -1,4 +1,5 @@
 export const userEndpoints = {
+  getActivityConfigs: "/api/activities/list",
   getRecordedActivities: "/api/activities/recorded",
   getRecordedActivityById: "/api/activities/recorded",
   createRecordedActivity: "/api/activities/recorded",

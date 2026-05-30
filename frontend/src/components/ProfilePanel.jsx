@@ -43,7 +43,7 @@ const ProfilePanel = (props) => {
 
   useEffect(() => {
     getDetails();
-  }, []);
+  }, [props.reload]);
 
   return (
     <div className={css["profile-panel"]}>

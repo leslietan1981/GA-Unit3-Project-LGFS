@@ -8,7 +8,7 @@ const ActivityConfigSchema = new mongoose.Schema(
     laps_toggle: { type: Boolean, default: true },
     intensity_level_toggle: { type: Boolean, default: true },
     comments_toggle: { type: Boolean, default: true },
-    created_at_toggle: { type: Date, default: Date.now },
+    created_at: { type: Date, default: Date.now },
   },
   { collection: "activityConfig" },
 );
