@@ -8,6 +8,13 @@ export const userEndpoints = {
   getMe: "/api/accounts/details",
   updateMe: "/api/accounts/details",
   changePassword: "/api/accounts/password",
+  getAdminConfigs: "/api/activities/admin",
+  createAdminConfig: "/api/activities/admin",
+  updateAdminConfig: "/api/activities/admin",
+  deleteAdminConfig: "/api/activities/admin",
+  getAdminUsers: "/api/admin/accounts",
+  updateAdminUserRole: "/api/admin/accounts/access",
+  deleteAdminUser: "/api/admin/accounts",
 };
 
 export const getBearerHeader = (token) => {

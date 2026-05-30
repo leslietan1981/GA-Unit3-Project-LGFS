@@ -35,7 +35,12 @@ const AuthPage = () => {
       const decoded = jwtDecode(res.data.data.access);
       userCtx.setAccessToken(res.data.data.access);
       userCtx.setDisplayName(decoded.displayName || decoded.username);
-      navigate("/user/dashboard");
+      userCtx.setRole(decoded.role);
+      if (decoded.role === "admin") {
+        navigate("/admin/configs");
+      } else {
+        navigate("/user/dashboard");
+      }
     } else {
       setErrorMessage(res.message);
     }
