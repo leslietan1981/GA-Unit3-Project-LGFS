@@ -8,7 +8,7 @@ import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
 function App() {
   const devToken =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMTdiMGE1ZDdmZmViY2ZkNmNjMTZiZiIsInVzZXJuYW1lIjoibmV3dXNlciIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzgwMDIwMTYwLCJleHAiOjE3ODAxMDY1NjB9.YVAl54uqfNfhONHDHnqwKOTpzPjdX32xOCmVedcLqIQ";
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhMTdiMGE1ZDdmZmViY2ZkNmNjMTZiZiIsInVzZXJuYW1lIjoibmV3dXNlciIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzgwMTA2ODczLCJleHAiOjE3ODAxOTMyNzN9.t28cfUhEBdEJKfClF45acIB2PFWhoUaJl6PgSEJuda8";
   const [accessToken, setAccessToken] = useState(devToken);
   const [displayName, setDisplayName] = useState("Guest");
   return (

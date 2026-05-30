@@ -1,15 +1,17 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import RecordedActivityCard from "./RecordedActivityCard.jsx";
 import css from "../styles/HomePage.module.css";
 import { getBearerHeader, sharedFetch, userEndpoints } from "../utils/fetchingUtils.js";
 import UserContext from "../context/UserContext.js";
 import { getAsset, iconAddSrc } from "../utils/assetUtils.js";
+import AddRecordedActivityDialog from "./AddRecordedActivityDialog.jsx";
 
 const RecordedActivityPanel = (props) => {
   const userCtx = useContext(UserContext);
   const fetchData = sharedFetch();
 
   const [activities, setActivities] = useState([]);
+  const dialogRef = useRef(null);
 
   const getActivities = async () => {
     const res = await fetchData(userEndpoints.getRecordedActivities, "GET", {
@@ -30,18 +32,25 @@ const RecordedActivityPanel = (props) => {
     getActivities();
   }, []);
 
+  const handleAddActivity = () => {
+    dialogRef.current.showModal();
+  };
+
   return (
-    <div className={`${css["rec-activity-panel"]}`}>
-      <div>
-        <div className={`${css["panel-header"]}`}>Activity Feeds</div>
-        <button className={`${css["action-icon-button"]}`}>
-          <img className={`${css["button-icon"]}`} src={getAsset(iconAddSrc)} alt={`add activitiy icon`} />
-        </button>
+    <>
+      <AddRecordedActivityDialog ref={dialogRef} />
+      <div className={`${css["rec-activity-panel"]}`}>
+        <div className={`${css["panel-header-wrapper"]}`}>
+          <div className={`${css["panel-header"]}`}>Activity Feeds</div>
+          <button className={`${css["action-icon-button"]} ${css["button-border"]}`} onClick={handleAddActivity}>
+            <img className={`${css["button-icon"]}`} src={getAsset(iconAddSrc)} alt={`add activitiy icon`} />
+          </button>
+        </div>
+        {activities.map((item) => (
+          <RecordedActivityCard key={item._id} data={item} />
+        ))}
       </div>
-      {activities.map((item) => (
-        <RecordedActivityCard key={item._id} data={item} />
-      ))}
-    </div>
+    </>
   );
 };
 
