@@ -1,15 +1,15 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import css from "../styles/HomePage.module.css";
-import { getDateLocal } from "../utils/dateUtils.js";
-import { getAsset, iconCloseSrc } from "../utils/assetUtils.js";
 import StatSelect from "./StatSelect.jsx";
+import StatDateInput from "./StatDateInput.jsx";
 import StatTextInput from "./StatTextInput.jsx";
 import StatMultiTextInput from "./StatMultiTextInput.jsx";
-import StatDateInput from "./StatDateInput.jsx";
 import StatTextarea from "./StatTextarea.jsx";
-import UserContext from "../context/UserContext.js";
+import { getAsset, iconCloseSrc } from "../utils/assetUtils.js";
 import { getBearerHeader, sharedFetch, userEndpoints } from "../utils/fetchingUtils.js";
-import { getDurationInMs } from "../utils/activityUtils.js";
+import UserContext from "../context/UserContext.js";
+import { getDurationArray, getDurationInMs } from "../utils/activityUtils.js";
+import { getDateLocal } from "../utils/dateUtils.js";
 
 const intensityMappings = [
   { name: "Low", value: 1 },
@@ -17,7 +17,7 @@ const intensityMappings = [
   { name: "High", value: 3 },
 ];
 
-const AddRecordedActivityDialog = (props) => {
+const UpdateRecordedActivityDialog = (props) => {
   const userCtx = useContext(UserContext);
   const fetchData = sharedFetch();
   const [isReady, setIsReady] = useState(false);
@@ -40,7 +40,7 @@ const AddRecordedActivityDialog = (props) => {
   const [showLaps, setShowLaps] = useState(false);
   const [showIntensity, setShowIntensity] = useState(false);
 
-  const getActivityConfig = async () => {
+  const getActivityAndConfig = async () => {
     const res = await fetchData(userEndpoints.getActivityConfigs, "GET", {});
     if (!res.ok) {
       console.log("failed to get activity configs");
@@ -56,6 +56,32 @@ const AddRecordedActivityDialog = (props) => {
     setActivity(activityObj);
     setType(activityObj.types[0].value);
     updateToggles(activityObj.configs[0]);
+
+    const res2 = await fetchData(userEndpoints.getRecordedActivityById, "POST", {
+      auth: getBearerHeader(userCtx.accessToken),
+      body: { recorded_activity_id: props.id },
+    });
+
+    if (!res2.ok) {
+      console.log("failed to get activity");
+      return;
+    }
+
+    const { type, activity_date, distance_m, duration_ms, laps, intensity_level, comments } = res2.data.result;
+    setType(type);
+    setDate(getDateLocal(new Date(activity_date)));
+
+    setDistance(distance_m);
+
+    const durationArray = getDurationArray(duration_ms);
+    setDurationH(durationArray[0]);
+    setDurationM(durationArray[1]);
+    setDurationS(durationArray[2]);
+
+    setLaps(laps);
+    setIntensity(intensity_level);
+    setComments(comments);
+
     setIsReady(true);
   };
 
@@ -74,7 +100,7 @@ const AddRecordedActivityDialog = (props) => {
   };
 
   useEffect(() => {
-    getActivityConfig();
+    getActivityAndConfig();
   }, []);
 
   useEffect(() => {
@@ -101,12 +127,13 @@ const AddRecordedActivityDialog = (props) => {
     }
   }, [type]);
 
-  const handleAdd = () => {
+  const handleUpdate = () => {
     submitActivity();
   };
 
   const submitActivity = async () => {
     const body = {
+      recorded_activity_id: props.id,
       type,
       activity_date: date,
       comments: comments,
@@ -116,12 +143,12 @@ const AddRecordedActivityDialog = (props) => {
     if (showLaps) body.laps = laps;
     if (showIntensity) body.intensity_level = intensity;
 
-    const res = await fetchData(userEndpoints.createRecordedActivity, "PUT", {
+    const res = await fetchData(userEndpoints.updateRecordedActivityById, "PUT", {
       auth: getBearerHeader(userCtx.accessToken),
       body,
     });
     if (!res.ok) {
-      console.log("failed to add activity");
+      console.log("failed to update activity");
       return;
     }
 
@@ -131,7 +158,7 @@ const AddRecordedActivityDialog = (props) => {
   return (
     <dialog className={css["dialog-box"]} ref={dialogRef}>
       <div className={`${css["panel-header-wrapper"]} ${css["flex-between"]}`}>
-        <div className={css["panel-header"]}>Add Activity</div>
+        <div className={css["panel-header"]}>Edit Activity</div>
         <button className={`${css["action-icon-button"]} ${css["button-border"]}`} onClick={props.onClose}>
           <img className={css["button-icon"]} src={getAsset(iconCloseSrc)} alt={`close icon`} />
         </button>
@@ -187,8 +214,8 @@ const AddRecordedActivityDialog = (props) => {
           </div>
           <StatTextarea title="Comment" value={comments} setValue={setComments} size={css["stat-input-lg"]} />
           <div>
-            <button className={css["text-button"]} onClick={handleAdd}>
-              Add
+            <button className={css["text-button"]} onClick={handleUpdate}>
+              Update
             </button>
             <button className={css["text-button-cancel"]} onClick={props.onClose}>
               Cancel
@@ -200,4 +227,4 @@ const AddRecordedActivityDialog = (props) => {
   );
 };
 
-export default AddRecordedActivityDialog;
+export default UpdateRecordedActivityDialog;
