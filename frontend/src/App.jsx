@@ -5,6 +5,7 @@ import cssMain from "./styles/App.module.css";
 import UserContext from "./context/UserContext.js";
 import AuthPage from "./components/AuthPage.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
+import ProfilePage from "./components/ProfilePage.jsx";
 
 function App() {
   const [accessToken, setAccessToken] = useState("");
@@ -24,6 +25,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <HomePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/user/profile"
+            element={
+              <ProtectedRoute>
+                <ProfilePage />
               </ProtectedRoute>
             }
           />

@@ -5,6 +5,9 @@ export const userEndpoints = {
   createRecordedActivity: "/api/activities/recorded",
   updateRecordedActivityById: "/api/activities/recorded",
   deleteRecordedActivityById: "/api/activities/recorded",
+  getMe: "/api/accounts/details",
+  updateMe: "/api/accounts/details",
+  changePassword: "/api/accounts/password",
 };
 
 export const getBearerHeader = (token) => {
@@ -30,7 +33,11 @@ export const sharedFetch = () => {
         if (data?.message) {
           if (Array.isArray(data.message)) {
             console.error("Array(data.message)", data.message[0].message);
-            return { status: res.status, ok: false, message: data.message[0].message };
+            return {
+              status: res.status,
+              ok: false,
+              message: data.message[0].message,
+            };
           } else {
             console.error("data.message", data.message);
             return { status: res.status, ok: false, message: data.message };
